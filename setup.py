@@ -3,6 +3,7 @@ from torch.utils import cpp_extension
 
 pytorch_compile_args = [
     "-std=c++17",
+    "-ObjC++",
     "-arch", "arm64",
     "-mmacosx-version-min=12.0",
 ]
@@ -14,7 +15,9 @@ pytorch_link_args = [
 framework_args = [
     '-framework', 'Foundation',
     '-framework', 'Metal',
-    '-framework', 'Accelerate'
+    '-framework', 'Accelerate',
+    '-framework', 'MetalPerformanceShaders',
+    '-framework', 'MetalPerformanceShadersGraph'
 ]
 
 pytorch_link_args.extend(framework_args)
