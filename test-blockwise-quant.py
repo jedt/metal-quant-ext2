@@ -53,7 +53,7 @@ def test_blockwise_quant():
     error = torch.abs(input_tensor.cpu() - output.cpu())
     max_error = error.max().item()
     mean_error = error.mean().item()
-    print(f"Dequant Max error: {max_error:.4f}, Mean error: {mean_error:.4f}")
+    print(f"Dequantize Max error: {max_error:.4f}, Mean error: {mean_error:.4f}")
 
     # Dynamic tolerance based on scales
     max_scale = scales.max().cpu().item()

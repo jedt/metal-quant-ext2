@@ -26,7 +26,7 @@ pip3 install --ignore-installed .
 `blockwise_quant` is a function that applies symmetric blockwise 8-bit quantization to a pytorch tensor
 
 ```python
-from metal_quant_ext2 import blockwise_quant
+from metal_quant_ext2 import blockwise_quant, dequantize
 mps_device = torch.device("mps")
 
 input_tensor = torch.randn(1024, device=mps_device, dtype=torch.float32)
@@ -42,6 +42,11 @@ blockwise_quant(input_tensor, quantized, scales, offsets)
 
 print(f"quantized: {quantized}")
 assert torch.all(quantized.cpu() >= -127) and torch.al(quantized.cpu() <= 127)
+
+# Dequantize MTL call
+scales = scales.to(mps_device)
+output = torch.empty_like(input_tensor)
+dequantize(quantized, scales, output)
 ```
 
 ### Testing
