@@ -84,4 +84,23 @@ kernel void blockwise_quant(
 		quantized[load_pos] = char(round(clamped));
 	}
 }
+
+kernel void blockwise_dequant(
+    device const char* quantized [[buffer(0)]],
+    device const float* scales [[buffer(1)]],
+    device float* output [[buffer(2)]],
+    constant uint& total_elements [[buffer(3)]],
+    uint tid [[thread_index_in_threadgroup]],
+    uint bid [[threadgroup_position_in_grid]]
+) {
+    const uint block_start = bid * BLOCK_SIZE;
+    const uint global_end = min(block_start + BLOCK_SIZE, total_elements);
+    const uint index = block_start + tid;
+
+    if (index >= global_end) return;
+
+    const float scale = scales[bid];
+    output[index] = float(quantized[index]) * scale;
+}
+
 )";

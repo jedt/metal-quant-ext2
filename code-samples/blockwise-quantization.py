@@ -70,9 +70,19 @@ def assemble_blocks(blocks, orig_shape, block_shape):
     # For 2D tensor (expand for higher dimensions)
     for i in range(0, orig_shape[0], block_shape[0]):
         for j in range(0, orig_shape[1], block_shape[1]):
-            block_size = (min(block_shape[0], orig_shape[0]-i),
-                         min(block_shape[1], orig_shape[1]-j))
-            reconstructed[i:i+block_shape[0], j:j+block_shape[1]] = blocks[block_idx]
+            # Calculate actual block size (might be smaller at edges)
+            block_size_i = min(block_shape[0], orig_shape[0] - i)
+            block_size_j = min(block_shape[1], orig_shape[1] - j)
+
+            # Get the correctly sized block from the list
+            current_block = blocks[block_idx]
+
+            # Handle potential shape mismatch (just in case)
+            assert current_block.shape == (block_size_i, block_size_j), \
+                f"Block {block_idx} has shape {current_block.shape}, expected {(block_size_i, block_size_j)}"
+
+            # Insert into reconstructed tensor
+            reconstructed[i:i+block_size_i, j:j+block_size_j] = current_block
             block_idx += 1
 
     return reconstructed
